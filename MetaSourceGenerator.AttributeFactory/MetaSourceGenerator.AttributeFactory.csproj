@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk"> 
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<IsPackable>true</IsPackable>
+		<PackageType>Analyzer</PackageType>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<RootNamespace>zms9110750.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>zms9110750.$(MSBuildProjectName)</AssemblyName>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>zms9110750</Authors>
+		<PackageProjectUrl>https://github.com/zms9110750/zms9110750Library</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/zms9110750/zms9110750Library</RepositoryUrl>
+		 
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Version>0.1.0.0</Version>
+		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
+		<Title>源生成的特性元数据生成强类型特性</Title>
+	</PropertyGroup>
+	<ItemGroup> 
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="*" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="*" PrivateAssets="all" />
+		<None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" />
+
+		<None Update="Readme.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+</Project>

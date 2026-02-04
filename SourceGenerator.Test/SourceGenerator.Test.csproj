@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
+		<OutputType>Library</OutputType>
+		<PackageType>Analyzer</PackageType>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<RootNamespace>zms9110750.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>zms9110750.$(MSBuildProjectName)</AssemblyName> 
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<Authors>zms9110750</Authors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="*" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="*" PrivateAssets="all" />
+		<ProjectReference Include="..\MetaSourceGenerator.AttributeFactory\MetaSourceGenerator.AttributeFactory.csproj" OutputItemType="Analyzer" />
+
+
+	</ItemGroup>
+
+</Project>
