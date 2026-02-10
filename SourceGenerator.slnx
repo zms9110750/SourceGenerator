@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="InterfaceImplAsExtensionGenerator/InterfaceImplAsExtensionGenerator.csproj" />
   <Project Path="MetaSourceGenerator.AttributeFactory/MetaSourceGenerator.AttributeFactory.csproj" />
   <Project Path="SourceGenerator.Test/SourceGenerator.Test.csproj" Id="105ac3f1-bc35-4672-a7e4-2e7e9d5d5b8c" />
   <Project Path="Test/Test.csproj" Id="39340946-83f2-4da1-93d9-7162efec29c3" />

@@ -1,24 +1,33 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
-using System.Linq;
-using zms9110750.MetaSourceGenerator.AttributeFactory.Gener;
+using zms9110750.MetaSourceGenerator.AttributeFactory.DiagnosticDefine;
 
-namespace zms9110750.MetaSourceGenerator.AttributeFactory.Converter
+namespace zms9110750.MetaSourceGenerator.AttributeFactory.Builder
 {
-    class MethodConverter : BaseConverter
+    class MethodBuilder : BaseBuilder
     {
         private readonly IMethodSymbol _methodSymbol;
         private readonly MethodDeclarationSyntax _methodSyntax;
         private readonly string _attributeFullName;
         private readonly string _parameterName;
-        public MethodConverter(IMethodSymbol methodSymbol, MethodDeclarationSyntax methodSyntax) : base((INamedTypeSymbol)methodSymbol.ReturnType)
+
+        public override string? FileName { get; }
+
+        public MethodBuilder(IMethodSymbol methodSymbol, MethodDeclarationSyntax methodSyntax) : base((INamedTypeSymbol)methodSymbol.ReturnType)
         {
             _methodSymbol = methodSymbol;
             _methodSyntax = methodSyntax;
             _attributeFullName = _methodSymbol.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             _parameterName = _methodSymbol.Parameters[0].Name;
+            FileName = methodSymbol.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))
+                        .Replace("<", "{")
+                        .Replace(">", "}")
+                        + ".g.cs";
+
+            if (this.Any(s => s.Descriptor.DefaultSeverity == DiagnosticSeverity.Error))
+            {
+                FileName = null;
+            }
         }
 
         public override CompilationUnitSyntax Generate()
@@ -93,26 +102,90 @@ namespace zms9110750.MetaSourceGenerator.AttributeFactory.Converter
             return null;
         }
 
-        public override IEnumerable<DiagnosticDescriptor> Diagnostics()
-        {
-            List<DiagnosticDescriptor> list = new List<DiagnosticDescriptor>();
-            if (HasTypeConstructors.Where(p => !ShouldGenerateMethod(p)).Any())
-            {
-                list.Add(FromAttributeDiagnostic.ZMS022);
-            }
-            if (!HasTypeWritableProperties.IsEmpty)
-            {
-                list.Add(FromAttributeDiagnostic.ZMS007);
-            }
-            return list;
-        }
         public override bool IsValidMemberAccessibility(Accessibility accessibility)
         {
             return accessibility switch
             {
-                Accessibility.Public => true, 
+                Accessibility.Public => true,
                 _ => false
             };
+        }
+         
+        public override IEnumerator<Diagnostic> GetEnumerator()
+        {
+            Location location = _methodSyntax!.GetLocation();
+            foreach (var item in _methodSymbol!.GetAttributes())
+            {
+                if (item.AttributeClass!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::zms9110750.MetaSourceGenerator.AttributeFactory.FromAttributeDataAttribute")
+                {
+                    location = item.ApplicationSyntaxReference!.GetSyntax().GetLocation();
+                    break;
+                }
+            }
+            // 1. 检查方法是否只有一个参数
+            if (_methodSymbol.Parameters.Length != 1)
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS001, location);
+            }
+
+            // 2. 检查参数类型是否为 AttributeData
+            var paramType = _methodSymbol.Parameters[0].Type;
+            if (paramType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) !=
+                "global::Microsoft.CodeAnalysis.AttributeData")
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS006, location);
+            }
+
+            // 3. 检查是否有 ref/in/out/params 参数
+            var parameters = _methodSymbol.Parameters;
+            foreach (var parameter in parameters)
+            {
+                if (parameter.RefKind != RefKind.None || parameter.IsParams)
+                {
+                    yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS002, location);
+                }
+            }
+
+            // 4. 检查是否为泛型方法
+            if (_methodSymbol.IsGenericMethod)
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS003, location);
+            }
+
+            // 5. 检查返回值是否为 Attribute 或其派生类
+            var returnType = _methodSymbol.ReturnType;
+
+            // 检查是否为抽象类
+            if (returnType.IsAbstract)
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS005, location);
+            }
+
+            // 检查是否继承自 System.Attribute
+            bool isAttributeDerived = false;
+            for (ITypeSymbol? currentType = returnType; currentType != null; currentType = currentType.BaseType)
+            {
+                if (currentType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.Attribute")
+                {
+                    isAttributeDerived = true;
+                    break;
+                }
+            }
+
+            if (!isAttributeDerived)
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS004, location);
+            }
+
+            if (HasTypeConstructors.Where(p => !ShouldGenerateMethod(p)).Any())
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS022, location);
+            }
+            if (!HasTypeWritableProperties.IsEmpty)
+            {
+                yield return Diagnostic.Create(FromAttributeDiagnostic.ZMS007, location);
+            }
+
         }
 #if false
         DescriptionAttribute Creat(AttributeData data)

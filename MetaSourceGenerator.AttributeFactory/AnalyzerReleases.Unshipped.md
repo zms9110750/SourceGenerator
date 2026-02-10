@@ -5,13 +5,13 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-ZMS001 | Usage | Warning | FromAttributeDiagnostic
-ZMS002 | Usage | Warning | FromAttributeDiagnostic
-ZMS003 | Usage | Warning | FromAttributeDiagnostic
-ZMS004 | Usage | Warning | FromAttributeDiagnostic
-ZMS005 | Usage | Warning | FromAttributeDiagnostic
-ZMS006 | Usage | Warning | FromAttributeDiagnostic
+ZMS001 | Usage | Error | FromAttributeDiagnostic
+ZMS002 | Usage | Error | FromAttributeDiagnostic
+ZMS003 | Usage | Error | FromAttributeDiagnostic
+ZMS004 | Usage | Error | FromAttributeDiagnostic
+ZMS005 | Usage | Error | FromAttributeDiagnostic
+ZMS006 | Usage | Error | FromAttributeDiagnostic
 ZMS007 | Usage | Info | FromAttributeDiagnostic
-ZMS020 | Usage | Warning | FromAttributeDiagnostic
-ZMS021 | Usage | Warning | FromAttributeDiagnostic
+ZMS020 | Usage | Error | FromAttributeDiagnostic
+ZMS021 | Usage | Error | FromAttributeDiagnostic
 ZMS022 | Usage | Info | FromAttributeDiagnostic

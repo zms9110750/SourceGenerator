@@ -1,12 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+﻿
 
-namespace zms9110750.MetaSourceGenerator.AttributeFactory.Converter
+using System.Collections;
+
+namespace zms9110750.MetaSourceGenerator.AttributeFactory.Builder
 {
-    abstract class BaseConverter
+    abstract class BaseBuilder:IEnumerable<Diagnostic>
     {
         protected readonly string AttributeFullName;
         protected readonly INamedTypeSymbol AttributeSymbol;
@@ -14,7 +12,7 @@ namespace zms9110750.MetaSourceGenerator.AttributeFactory.Converter
         protected readonly ImmutableArray<IPropertySymbol> NoHasTypeWritableProperties = ImmutableArray<IPropertySymbol>.Empty;
         protected readonly ImmutableArray<IMethodSymbol> HasTypeConstructors = ImmutableArray<IMethodSymbol>.Empty;
         protected readonly ImmutableArray<IPropertySymbol> HasTypeWritableProperties = ImmutableArray<IPropertySymbol>.Empty;
-        public BaseConverter(INamedTypeSymbol attributeSymbol)
+        public BaseBuilder(INamedTypeSymbol attributeSymbol)
         {
             AttributeSymbol = attributeSymbol;
             AttributeFullName = AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -268,8 +266,13 @@ namespace zms9110750.MetaSourceGenerator.AttributeFactory.Converter
             };
         }
         public abstract bool IsValidMemberAccessibility(Accessibility accessibility);
+        public abstract IEnumerator<Diagnostic> GetEnumerator();
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-        public abstract IEnumerable<DiagnosticDescriptor> Diagnostics();
+        public abstract string? FileName { get; }
     }
 }

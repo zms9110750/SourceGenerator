@@ -1,72 +1,37 @@
 ﻿
-
-#if true
-using Microsoft.CodeAnalysis;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Numerics;
-using Test;
-using zms9110750.SourceGenerator.Test;
-namespace Test
+using zms9110750.InterfaceImplAsExtensionGenerator;
+
+
+namespace MyNamespace
 {
-    //  [zms9110750.SourceGenerator.Shared.AttributeFactory.FromAttributeDataAttribute]
+    [ExtensionSourceAttribute]
+    public interface IHP2<T> where T : class, IEquatable<T>, IList<int>, new()
+    {
+        [DescriptionAttribute]
+        void Hello();
+
+    }
+}
+[ExtensionSourceAttribute]
+public interface IHP1<T>where T:class
+{
     [DescriptionAttribute]
-
-    class Class6 : Attribute
+    void Hello();
+    [ExtensionSourceAttribute]
+    public interface IHP369<G> where G : class, IEquatable<T>, IList<T>, new() 
     {
-        public int Age { get; set; }
-        public int[] Ages { get; set; }
-        public string Name { get; set; }
-        public string[] Names { get; set; }
-        public string[][] Namess { get; set; }
-        public ABC Abc { get; set; }
-
-        public Random Random { get; set; }
-        public Class6(int i) { }
-        public Class6() { }
-        public Class6(int i, int b) { }
-        public Class6(Random i, string b, BigInteger bigInteger) { }
-        public Class6(string op) { }
-        public Class6(string[] op) { }
-        public Class6(Type[] op) { }
-        public Class6(Random i) { }
-        public Class6(bool? b) { }
-        public Class6(bool b) { }
-    }
-}
-
-class ABC
-{
-
-    [Test(Age = 6)]
-    [Test(Name = "小明", Types = [typeof(int), typeof(string), typeof(Type)])]
-    [Test(4, "wocao", Type = typeof(int))]
-    [Test(Color = Color.Yelloow | Color.Orange)]
-    public void Hello() { }
-}
-
-
-[Class6(12, Age = 6, Name = "age")]
-partial class BBC
-{
-
-
-};
-
-
-namespace APP.VV
-{
-    namespace AP
-    {
-
-        static partial class BBC
-        {
-            /*
-           [Testu(Age = 6)]
-           [Testu(Name = "小明")]
-           public static partial Class6 Creat(AttributeData data);*/
-        };
+        [DescriptionAttribute]
+        void Hello();
 
     }
+
+    [ExtensionFor(typeof(IHP1<>))]
+    [ExtensionFor(typeof(IHP1<string>))]
+    static partial class LP
+    {
+
+    } 
 }
-#endif

@@ -69,6 +69,7 @@ namespace zms9110750.SourceGenerator.Test
 
         private static string GenerateFileName(IMethodSymbol methodSymbol)
         {
+
             var typeName = methodSymbol.ContainingType
                 .ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat
                     .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))
