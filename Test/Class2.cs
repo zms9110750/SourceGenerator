@@ -1,109 +1,88 @@
-﻿global using IList = System.Int32;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+using System.Drawing;
+using zms9110750.InterfaceImplAsExtensionGenerator;
+using IList = System.Int32;
 
-var p = SyntaxFactory.ParseMemberDeclaration("   public   void Hello3<T, H, E, G>() where T : class, E, new() where E : notnull, IList<E>, IEquatable<E> where H : unmanaged, allows ref struct where G : unmanaged\r\n    {\r\n    }") as MethodDeclarationSyntax;
-// 6. 输出
+Console.WriteLine();
 
-
-
-// 这是正确的写法
-var condition = SyntaxFactory.IdentifierName("NET10_0_OR_GREATER");
-var ifNet10 = SyntaxFactory.IfDirectiveTrivia(condition, true, true, true);
-var ifNotNet10 = ifNet10.WithCondition(SyntaxFactory.PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, condition));
-var endif = SyntaxFactory.EndIfDirectiveTrivia(true);
-Console.WriteLine(SyntaxFactory.EndIfDirectiveTrivia(true).NormalizeWhitespace());
-
-var extensionBlock = SyntaxFactory.ExtensionBlockDeclaration(
-    // 特性列表
-    attributeLists: SyntaxFactory.List<AttributeListSyntax>(), 
-    modifiers: SyntaxFactory.TokenList(), 
-    keyword: SyntaxFactory.Token(SyntaxKind.ExtensionKeyword), 
-    typeParameterList: null, 
-    parameterList: SyntaxFactory.ParameterList(
-        SyntaxFactory.SingletonSeparatedList(
-            SyntaxFactory.Parameter(
-                SyntaxFactory.Identifier("i"))
-                .WithType(SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.IntKeyword))))), 
-    constraintClauses: SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(), 
-    openBraceToken: SyntaxFactory.Token(SyntaxKind.OpenBraceToken), 
-    members: SyntaxFactory.List(new MemberDeclarationSyntax[] { }), 
-    closeBraceToken: SyntaxFactory.Token(SyntaxKind.CloseBraceToken), 
-    semicolonToken: default
-);
-
-Console.WriteLine(extensionBlock.NormalizeWhitespace());
-static class OL
-{ 
-}
-partial class CC
+namespace Hello.World
 {
-    [Description]
-    public void Hello3<T, H, E, G>()
-        where T : class, E, new()
-        where E : notnull, IList<E>, IEquatable<E>, new()
-        where H : unmanaged, allows ref struct
-        where G : unmanaged
+    [ExtensionFor(typeof(IList<int>))]
+    [ExtensionFor(typeof(IList<>))]
+    public static partial class Apple
     {
+        [ExtensionSource]
+        public interface IOrange
+        {
+            string GetSet { get; set; }
+#if NET10_0
+            string GetInit { get; init; }
+            string PropertyGet { protected get; set; }
+#endif
+            int this[string index] { get; }
+            internal void Hello<T1, T2, T3>(out T1 t)
+                 where T1 : class, IList<int>, new()
+                 where T2 : struct, ISet<T2>
+                 where T3 : class, IDog<T3>, new();
+
+            ref string Hello(out string t, params int[] i);
+
+            internal void Collection<T>(ref int a, int b = 10, string s = "hello\t" + @"  {你好}""{哈哈}  ", bool d = true | true ^ true, float f = 34, IDog<T>.Cat<T>.Color c = IDog<T>.Cat<T>.Color.B, params int[] p);
+        }
     }
-    [Description]
-    public void Hello4<T, H, E, G>()
-        where T : class, E, new()
-        where E : notnull, global::System.Collections.Generic.IList<E>, global::System.IEquatable<E>, new()
-        where H : unmanaged, allows ref struct
-        where G : unmanaged
+    interface IDog<T>
     {
+        public interface Cat<T>
+        {
+            @class @event<@int>(@int @string);
+            public enum Color
+            {
+                Red = 1, Green = 2, Blue = 4, Ambient = 8, Cyan = 16, DarkBlue = 32,
+                A = 33,
+                B = 33
+            }
+        }
     }
-    [Description]
-    public void Hello5<T, H, E, G>()
-       where E : Random, new()
-       where G : class, IEquatable<G>, new()
-       where H : unmanaged, IEquatable<G>, allows ref struct
-    {
-    }
+    class @class { }
+}
+[ExtensionSource]
+public interface IHello
+{
+    string GetSet { get; set; }
+#if NET10_0
+    string GetInit { get; init; }
+    string PropertyGet { protected get; set; }
+#endif
+    int this[string index] { get; }
+    void Hello();
+    string Hello(string t);
+    public void Hello<T1, T2, T3>(out T1 t)
+        where T1 : class, IList<int>, new()
+        where T2 : struct, ISet<int>
+        where T3 : class, IList<int>, new();
+
+    ref string Hello(out string t, params int[] i);
+
+    void Collection<T>(ref int a, int b = 10, string s = "hello\t" + @"  {你好}""{哈哈}  ", bool d = true | true ^ true, float f = 34, A<T>.B<T>.Color r = A<T>.B<T>.Color.B, params int[] p);
 }
 /*
-// 生成的代码
-// 方法: Hello3
-    [Description]
-    public void Hello3<T, H, E, G>()
-        where T : class,E,new()
-        where E : notnull,global::System.Collections.Generic.IList<E>,global::System.IEquatable<E>,new()
-        where H : unmanaged,allows ref struct
-        where G : unmanaged
-    {
-    }
-
+<LangVersion >preview</LangVersion >
 */
-/*
-// 生成的代码
-// 方法: Hello4
-    [Description]
-    public void Hello4<T, H, E, G>()
-        where T : class,E,new()
-        where E : notnull,global::System.Collections.Generic.IList<E>,global::System.IEquatable<E>,new()
-        where H : unmanaged,allows ref struct
-        where G : unmanaged
+public class @params { }
+public class A<T>
+{
+    public class B<T>
     {
+        public enum Color
+        {
+            Red = 1, Green = 2, Blue = 4, Ambient = 8, Cyan = 16, DarkBlue = 32,
+            A = 33,
+            B = 33
+        }
     }
+    internal protected class V { }
+}
+[ExtensionFor(typeof(List<int>))]
 
-*/
-/*
-// 生成的代码
-// 方法: Hello5
-    [Description]
-    public void Hello5<T, H, E, G>()
-       where E : global::System.Random,new()
-       where G : class,global::System.IEquatable<G>,new()
-       where H : unmanaged,global::System.IEquatable<G>,allows ref struct
-    {
-    }
-
-*/
+static partial class PC { }

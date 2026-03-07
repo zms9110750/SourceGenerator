@@ -5,7 +5,7 @@
     /// </summary>
     /// <remarks>
     /// 作为根级规则，未被接口/成员特性覆盖的配置将使用此处的值。
-    /// TypeNameSuffix 和 InstanceParameterName 为必填项，不可为 null 或空字符串。
+    /// TypeNameSuffix 和 InstanceName 为必填项，不可为 null 或空字符串。
     /// </remarks>
     [AttributeUsage(AttributeTargets.Assembly)]
     [FromAttributeData]
@@ -50,12 +50,8 @@
         public GenerateMembers DefaultGenerateMembers { get => field == default ? DefaultGenerateMembersValue : field; set; }
 
         /// <summary>
-        /// 是否使用旧语法（扩展方法形式）生成扩展
-        /// </summary>
-        /// <remarks>
-        /// 为 true 时使用传统扩展方法语法；为 false 时使用新扩展块语法。
-        /// 未设置时默认为 false（优先使用新语法）。
-        /// </remarks>
+        /// 使用什么语法生成扩展
+        /// </summary> 
         public ExtensionSyntaxVersion UseSyntax { get => field == default ? DefaultUseSyntax : field; set; }
 
         /// <summary>
@@ -66,7 +62,7 @@
         internal const string DefaultTypeNameSuffix = "Extension";
         internal const string DefaultInstanceParameterName = "instance";
         internal const GenerateMembers DefaultGenerateMembersValue = GenerateMembers.Property | GenerateMembers.Method;
-        internal const ExtensionSyntaxVersion DefaultUseSyntax = ExtensionSyntaxVersion.Both;
+        internal const ExtensionSyntaxVersion DefaultUseSyntax = ExtensionSyntaxVersion.Auto;
         internal const PublicModifier DefaultUsePublic = PublicModifier.FollowInterface;
 
     }

@@ -1,10 +1,12 @@
 ﻿namespace zms9110750.InterfaceImplAsExtensionGenerator
 {
+    /// <summary>
+    /// 为接口生成扩展。实现类可以以扩展方法调用默认实现的接口方法
+    /// </summary>
     [AttributeUsage(AttributeTargets.Interface)]
     [FromAttributeData]
     public partial class ExtensionSourceAttribute : Attribute
     {
-
         /// <summary>
         /// 扩展类的名称
         /// </summary>
@@ -19,7 +21,7 @@
         /// <remarks>
         /// 未设置时，使用接口原命名空间 + <see cref="ExtensionGlobalConfigAttribute.NamespaceSuffix"/>生成。
         /// </remarks>
-        public string? ExtensionClassNamespace { get => string.IsNullOrWhiteSpace(field) ? null : field; set; }
+        public string? ExtensionClassNamespace { get => string.IsNullOrWhiteSpace(field) && !string.IsNullOrEmpty(field) ? null : field; set; }
 
         /// <summary>
         /// 实例参数的名称

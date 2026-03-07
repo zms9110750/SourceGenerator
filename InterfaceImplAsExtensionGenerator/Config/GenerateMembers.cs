@@ -17,40 +17,24 @@ public enum GenerateMembers
     InheritOrDefault = 0,
 
     /// <summary>
-    /// 为属性生成包含get的扩展
-    /// </summary>
-    PropertyGet = 1 << 0,
-    /// <summary>
-    /// 为属性生成包含set的扩展
-    /// </summary>
-    PropertySet = 1 << 1,
-    /// <summary>
     /// 生成属性的扩展
     /// </summary>
-    Property = PropertyGet | PropertySet,
+    Property = 1 << 2,
 
-    /// <summary>
-    /// 为索引器生成包含get的扩展
-    /// </summary>
-    IndexerGet = 1 << 2,
-    /// <summary>
-    /// 为索引器生成包含set的扩展
-    /// </summary>
-    IndexerSet = 1 << 3,
     /// <summary>
     /// 生成索引器的扩展
     /// </summary>
-    Indexer = IndexerGet | IndexerSet,
+    Indexer = 1 << 4,
 
     /// <summary>
     /// 生成事件的扩展
     /// </summary>
-    Event = 1 << 4,
+    Event = 1 << 6,
 
     /// <summary>
     /// 生成方法的扩展
     /// </summary>
-    Method = 1 << 5,
+    Method = 1 << 8,
 
     /// <summary>
     /// 全部

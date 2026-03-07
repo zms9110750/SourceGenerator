@@ -6,157 +6,113 @@
 
 
 ## 主要API
-引入命名空间`zms9110750.InterfaceImplAsExtensionGenerator.Config`
+引入命名空间`zms9110750.InterfaceImplAsExtensionGenerator`
 
-### 程序集托底配置
-```csharp
-[assembly: InterfaceImplAsExtensionGlobal(UseLegacySyntax = false)]
-```
+- `ExtensionGlobalConfig`:全局配置，作用于程序集
+- `ExtensionSourceAttribute`:接口配置，作用于接口
+- `ExtensionForAttribute`:类配置，作用于顶级非泛型静态类
+- `ExtensionIncludeAttribute`:成员配置，并强制包含该成员生成扩展
+- `ExtensionIgnoreAttribute`:强制不包含该成员
 
-成员|效果|默认|备注
--|-|-|-
-`TypeNameSuffix`|生成的扩展类型名称后缀|`Extension`|
-`NamespaceSuffix`|命名空间追加字符串||追加的字符串会作为子命名空间
-`InstanceParameterName`|实例参数的默认名称|`instance`|
-`DefaultGenerateMembers`|默认要生成的成员类型| `Property | Method`|目前新语法不支持索引器和事件。在支持的时候可以自行启用
-`UseLegacySyntax`|是否使用旧语法|`false`|启用老语法，会全部以扩展方法形式生成。方法名和新语法一样。
+## 配置项
 
-
-### 接口扩展特性
-```csharp
-[InterfaceImplAsExtension(DefaultGenerateMembers = GenerateMembers.Method)]
-interface IHello
-{
-}
-```
-成员|效果|备注
--|-|-
-`ExtensionClassName`|扩展类的名称|指定名称而不是后缀
-`ExtensionClassNamespace`|扩展类所在的命名空间|指定名称而不是后缀。可以为`null`
-`InstanceParameterName`|实例参数的名称|
-`DefaultGenerateMembers`|为当前接口默认生成的成员类型|
-
-### 成员微调特性
-```csharp
-	[IncludeInterfaceMemberAsExtension(ReplacementMemberName = "GetSet")]
-	string GetSet { get; set; }
-```
-成员|效果|备注
--|-|-
-`ReplacementMemberName`|生成的扩展成员的替代名称|
-`InstanceParameterName`|实例参数的名称|仅在旧语法的扩展方法中有效
-`ForceGenerate`|强制控制成员是否生成|`null`为根据配置，`true`和`false`为强制生成/不生成
-
-### 静态类附加接口扩展特性
-```csaharp
-[ExtendWithInterfaceImpl(typeof(IList<int>))]
-[ExtendWithInterfaceImpl(typeof(ISet<int>))]
-public static partial class ClassExtensions
-{
-}
-```
-成员|效果|备注
--|-|-
-`AppendInterfaceType`|要追加成员的接口类型|在构造器中必填
-`InstanceParameterName`|实例参数的名称|
-`DefaultGenerateMembers`|为追加的接口默认生成的成员类型|
-
-### 生成类型枚举
-```csharp
-GenerateMembers.Property| GenerateMembers.Method
-```
-
-- `Property`:生成属性的扩展
-- `Method`:生成方法的扩展
-- `Indexer`:生成索引器的扩展
-- `Event`:生成事件的扩展
-
-
-
+效果|全局配置|接口配置|类配置|成员配置|默认设置|备注
+-|-|-|-|-|-|-
+使用扩展语法|`UseSyntax`|-|-|-|自动|-
+附带`public`修饰|`UsePublic`|`UsePublic(bool)`|-|-|跟随接口|全局配置使用枚举。接口配置使用`bool`，类配置自行为声明类添加修饰符
+作用目标接口|-|特性附着的接口|构造器参数|-|-|-
+类名|`TypeNameSuffix`|`ExtensionClassName`|特性附着类|-|`Extension`|全局配置仅设置后缀
+类所在命名空间|`NamespaceSuffix`|`ExtensionClassNamespace`|特性附着类|-|-|全局配置仅设置后缀。后缀名即子命名空间。
+实例参数名|`InstanceParameterName`|`InstanceParameterName`|`InstanceParameterName`|`InstanceParameterName`|`instance`|扩展方法的实例变量名可被成员配置影响。扩展块实例名仅能被接口配置和类配置影响。
+成员名|-|-|-|`ReplacementMemberName`|跟随成员名|扩展方法版本的访问器会有`get_`,`set_`,`add_`,`remove_`前缀。索引器总是`get_Item`和`set_Item`
+包含的成员|`DefaultGenerateMembers`|`DefaultGenerateMembers`|`DefaultGenerateMembers`|附着成员强制包含|属性和方法|目前扩展块语法不支持索引器和事件。在支持的时候可以自行启用
  
+## 配置枚举项
+
+### `PublicModifier`
+
+全局配置的`UsePublic`成员枚举。
+
+- `NoModifier`：始终不添加
+- `FollowInterface`:跟随接口
+- `Always`:总是添加
+ 
+### `GenerateMembers`
+
+所有配置的`DefaultGenerateMembers`成员枚举。
+指示为哪些成员生成扩展。按位枚举。
+
+- `Property`：属性
+- `Indexer`:索引器
+- `Event`：事件
+- `Method`：方法
+- `All`：全部
+   
+### `ExtensionSyntaxVersion`
+
+全局配置的`UseSyntax`成员枚举。
+- `Auto`：如果当前项目语言>=c#14，以扩展块生成。否则以扩展方法生成。
+- `ExtensionBlock`：扩展块
+- `ExtensionMethod`：扩展方法
+- `Both`：生成基于`#if NET10_OR_GREATER`的条件编译。
+
+## 边缘测试
+
+- 方法或属性返回`ref`和`ref readonly`类型
+- 参数或成员名为关键字
+- 泛型名与声明处有同名泛型（泛型方法和泛型接口，泛型接口和嵌套泛型接口）
+- 参数有`ref`,`in`,`out`,`params`修饰
+- 泛型约束
+- 访问器独立访问权限修饰符（仅在`public`和`internal`时区分）
+- 属性没有有效访问器（仅有`init`访问器。`get`访问器不存在或访问权限过低）
+- `internal protected`视为`internal`
+- 区分有返回值方法和`void`方法
+- 参数默认值
+- 没有对应字段或多个对应字段的枚举默认值
+- 生成对源成员的文档注释引用
+
+
 ## 示例
 
 ```csharp
-interface IHello
+namespace Hello.World
 {
-	string GetSet { get; set; }
-	string GetInit { get; init; }
-	string PropertyGet { protected get; set; }
-	int this[string index] { get; }
-	void Hello();
-	string Hello(string t);
-	public void Hello<T1, T2, T3>(out T1 t)
-		where T1 : class, IList<int>, new()
-		where T2 : struct, ISet<int>
-		where T3 : class, IList<int>, new();
-
-	void Hello(ref string t);
-
-	void Collection(ref int a, int b = 10, string s = "hello\t" + @"  {你好}""{哈哈}  ", bool d = true | true ^ true, float f = 34, Color r = Color.Red, params int[] p);
-}
-```
-生成：
-```csharp
-static partial class IHelloExtension
-{
-    extension(global::IHello instance)
+    [ExtensionFor(typeof(IList<int>))]
+    [ExtensionFor(typeof(IList<>))]
+    public static partial class Apple
     {
-        /// <inheritdoc cref="global::IHello.GetSet"/>
-        public string GetSet
+        [ExtensionSource]
+        public interface IOrange
         {
-            get => instance.GetSet;
-            set => instance.GetSet = value;
-        }
-        /// <inheritdoc cref="global::IHello.GetInit"/>
-        public string GetInit
-        {
-            get => instance.GetInit;
-        }
-        /// <inheritdoc cref="global::IHello.PropertyGet"/>
-        public string PropertyGet
-        {
-            set => instance.PropertyGet = value;
-        }
-        /// <inheritdoc cref="global::IHello.Hello()"/>
-        public void Hello()
-        {
-            instance.Hello();
-        }
-        /// <inheritdoc cref="global::IHello.Hello(string)"/>
-        public string Hello(string t)
-        {
-            return instance.Hello(t);
-        }
-        /// <inheritdoc cref="global::IHello.Hello{T1,T2,T3}(out T1)"/>
-        public void Hello<T1, T2, T3>(out T1 t)
-             where T1 : class, global::System.Collections.Generic.IList<int>, new()
-             where T2 : struct, global::System.Collections.Generic.ISet<int>
-             where T3 : class, global::System.Collections.Generic.IList<int>, new()
-        {
-            instance.Hello<T1, T2, T3>(out t);
-        }
-        /// <inheritdoc cref="global::IHello.Hello(ref string)"/>
-        public void Hello(ref string t)
-        {
-            instance.Hello(ref t);
-        }
-        /// <inheritdoc cref="global::IHello.Collection(ref int, int, string, bool, float, global::Color, int[])"/>
-        public void Collection(ref int a, int b = 10, string s = @"hello	  {你好}""{哈哈}  ", bool d = true, float f = 34f, global::Color r = (global::Color)1 /* CA1069 */ , params int[] p)
-        {
-            instance.Collection(ref a, b, s, d, f, r, p);
+            string GetSet { get; set; }
+#if NET10_0
+            string GetInit { get; init; }
+            string PropertyGet { protected get; set; }
+#endif
+            int this[string index] { get; }
+            internal void Hello<T1, T2, T3>(out T1 t)
+                 where T1 : class, IList<int>, new()
+                 where T2 : struct, ISet<T2>
+                 where T3 : class, IDog<T3>, new();
+
+            ref string Hello(out string t, params int[] i);
+
+            internal void Collection<T>(ref int a, int b = 10, string s = "hello\t" + @"  {你好}""{哈哈}  ", bool d = true | true ^ true, float f = 34, IDog<T>.Cat<T>.Color c = IDog<T>.Cat<T>.Color.B, params int[] p);
         }
     }
+    interface IDog<T>
+    {
+        public interface Cat<T>
+        {
+            @class @event<@int>(@int @string);
+            public enum Color
+            {
+                Red = 1, Green = 2, Blue = 4, Ambient = 8, Cyan = 16, DarkBlue = 32,
+                A = 33,
+                B = 33
+            }
+        }
+    }
+    class @class { }
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-

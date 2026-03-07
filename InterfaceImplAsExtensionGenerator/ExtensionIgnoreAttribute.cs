@@ -8,7 +8,7 @@
     /// </remarks>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event)]
     [FromAttributeData]
-    public partial class ExtensionExcludeAttribute : Attribute
+    public partial class ExtensionIgnoreAttribute : Attribute
     {
     }
 }

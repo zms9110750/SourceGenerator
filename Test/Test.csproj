@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>.net10.0</TargetFramework> 
-		<LangVersion>preview</LangVersion>
+		<TargetFrameworks>.net10.0;netstandard2.0</TargetFrameworks>
+		<LangVersion >preview</LangVersion >
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\InterfaceImplAsExtensionGenerator\InterfaceImplAsExtensionGenerator.csproj" OutputItemType="Analyzer" />
 
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="*" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="*" PrivateAssets="all" />
-		<ProjectReference Include="..\SourceGenerator.Test\SourceGenerator.Test.csproj" OutputItemType="Analyzer" />
-		<ProjectReference Include="..\InterfaceImplAsExtensionGenerator\InterfaceImplAsExtensionGenerator.csproj" OutputItemType="Analyzer" />
 
+		<Using Include="Microsoft.CodeAnalysis.CSharp.SyntaxFactory">
+			<Static>True</Static>
+		</Using>
 
 	</ItemGroup>
 

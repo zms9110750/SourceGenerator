@@ -1,7 +1,7 @@
 ﻿namespace zms9110750.InterfaceImplAsExtensionGenerator
 {
     /// <summary>
-    /// 接口成员级别的扩展生成规则
+    /// 接口成员的扩展生成规则
     /// </summary>
     /// <remarks>
     /// 作用于接口的具体成员（方法、属性等），未设置的属性继承接口级或全局配置。<br/>
@@ -25,7 +25,7 @@
         /// </summary>
         /// <remarks>
         /// 未使用扩展方法语法时，此属性不生效
-        /// 未设置时继承接口级或程序集级 InstanceParameterName。
+        /// 未设置时继承接口级或程序集级 InstanceName。
         /// </remarks>
         public string? InstanceParameterName { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿using zms9110750.MetaSourceGenerator.AttributeFactory;
+﻿using zms9110750.InterfaceImplAsExtensionGenerator.Builder.Helper;
 
 namespace zms9110750.InterfaceImplAsExtensionGenerator
 {
@@ -10,7 +10,7 @@ namespace zms9110750.InterfaceImplAsExtensionGenerator
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     [FromAttributeData]
-public    partial class ExtensionForAttribute : Attribute
+    public partial class ExtensionForAttribute : Attribute
     {
         /// <summary>
         /// 要追加成员的接口类型（必填项）
@@ -20,11 +20,6 @@ public    partial class ExtensionForAttribute : Attribute
         /// 构造函数强制要求传入，不可为null。
         /// </remarks>
         public Type? AppendType { get; }
-
-        /// <summary>
-        /// 内部使用。为<see cref="AppendType"/>在<see cref="AttributeData"/>中的<see cref="INamedTypeSymbol"/>表现形式
-        /// </summary>
-        internal INamedTypeSymbol? AppendTypeSymbol { get; }
 
         /// <summary>
         /// 实例参数的名称
@@ -43,13 +38,17 @@ public    partial class ExtensionForAttribute : Attribute
         /// </remarks>
         public GenerateMembers DefaultGenerateMembers { get; set; }
 
+        /// <summary>
+        /// 为接口生成扩展
+        /// </summary>
+        /// <param name="appendType">要追加的接口</param>
         public ExtensionForAttribute(Type appendType)
         {
             AppendType = appendType;
         }
         internal ExtensionForAttribute(INamedTypeSymbol symbol)
         {
-            AppendTypeSymbol = symbol;
+            AppendTypeSymbol = symbol.IfThen(symbol.IsUnboundGenericType, symbol.OriginalDefinition); 
         }
     }
 }

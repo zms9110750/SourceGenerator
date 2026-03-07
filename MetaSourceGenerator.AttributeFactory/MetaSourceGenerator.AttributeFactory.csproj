@@ -21,8 +21,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
-		<AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+		<AdditionalFiles Include="DiagnosticDefine\AnalyzerReleases.Shipped.md" />
+		<AdditionalFiles Include="DiagnosticDefine\AnalyzerReleases.Unshipped.md" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="*" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="*" PrivateAssets="all" />
 		<None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" />
@@ -31,6 +31,9 @@
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
 		</None>
+		<Using Include="Microsoft.CodeAnalysis.CSharp.SyntaxFactory">
+			<Static>True</Static>
+		</Using>
 		<Using Include="Microsoft.CodeAnalysis " />
 		<Using Include="System.Collections.Immutable" />
 		<Using Include="Microsoft.CodeAnalysis.CSharp " />
@@ -38,8 +41,5 @@
 		<Using Include="Microsoft.CodeAnalysis.CSharp.Syntax " />
 		<Using Include="zms9110750.MetaSourceGenerator.AttributeFactory.Builder" />
 		<Using Include="zms9110750.MetaSourceGenerator.AttributeFactory.Gener" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="新文件夹\" />
 	</ItemGroup>
 </Project>

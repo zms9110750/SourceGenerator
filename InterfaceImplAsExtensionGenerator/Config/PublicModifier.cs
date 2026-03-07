@@ -23,5 +23,5 @@ public enum PublicModifier
     /// <summary>
     /// 总是添加
     /// </summary>
-    Always=3
+    Always = 3
 }
