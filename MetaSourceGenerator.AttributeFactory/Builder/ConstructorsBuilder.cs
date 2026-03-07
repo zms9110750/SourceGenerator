@@ -40,7 +40,7 @@ class ConstructorsBuilder(ClassBuilder classBuilder) : BaseBuilder(classBuilder.
                     var typeFullName = paraType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                     if (typeFullName == "global::System.Type")
                     {
-                        typeFullName = "global::Microsoft.CodeAnalysis.INamedTypeSymbol";
+                        typeFullName = "global::Microsoft.CodeAnalysis.ITypeSymbol";
                     }
                     if (toArray)
                     {
@@ -92,8 +92,8 @@ class ConstructorsBuilder(ClassBuilder classBuilder) : BaseBuilder(classBuilder.
 
                 switch (sourceType)
                 {
-                    case "global::System.Type" when targetType != "global::Microsoft.CodeAnalysis.INamedTypeSymbol":
-                    case "global::System.Type[]" when targetType != "global::Microsoft.CodeAnalysis.INamedTypeSymbol[]":
+                    case "global::System.Type" when targetType != "global::Microsoft.CodeAnalysis.ITypeSymbol":
+                    case "global::System.Type[]" when targetType != "global::Microsoft.CodeAnalysis.ITypeSymbol[]":
                         return false;
                     case "global::System.Type":
                     case "global::System.Type[]":

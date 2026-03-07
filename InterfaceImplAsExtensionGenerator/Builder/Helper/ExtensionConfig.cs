@@ -61,7 +61,7 @@ internal class ExtensionConfig
     {
         _ = typeClass ?? throw new ArgumentNullException(nameof(typeClass));
         _ = attribute ?? throw new ArgumentNullException(nameof(attribute));
-        TypeSymbol = attribute.AppendTypeSymbol;
+        TypeSymbol = (attribute.AppendTypeSymbol as INamedTypeSymbol)!;
         ClassName = typeClass.Name;
         NamespaceName = typeClass.ContainingNamespace.IsGlobalNamespace ? "" : typeClass.ContainingNamespace.ToDisplayString();
         InstanceName = attribute.InstanceParameterName ?? ExtensionGlobalConfig.InstanceParameterName;

@@ -20,7 +20,7 @@ class ClassBuilder(INamedTypeSymbol attributeSymbol, IndentedTextWriter writer, 
         Writer.WriteLine($"partial class {AttributeSymbol.Name}");
         Writer.AppendOpenBracket(deferredActionScope);
         PropertiesBuilder propertiesBuilder = new(this);
-        Writer.WriteLine($"public const string FullName = \"{AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}\";");
+        Writer.WriteLine($"internal const string FullName = \"{AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}\";");
         Writer.WriteLine();
 
         propertiesBuilder.GenerateSourceProperties();

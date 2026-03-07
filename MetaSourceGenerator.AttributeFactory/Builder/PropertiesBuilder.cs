@@ -26,7 +26,7 @@ class PropertiesBuilder(ClassBuilder classBuilder) : BaseBuilder(classBuilder.Wr
             var typeFullName = paraType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (typeFullName == "global::System.Type")
             {
-                typeFullName = "global::Microsoft.CodeAnalysis.INamedTypeSymbol";
+                typeFullName = "global::Microsoft.CodeAnalysis.ITypeSymbol";
                 Writer.Write($"Symbol");
             }
             Writer.Write($" = ");
@@ -50,11 +50,11 @@ class PropertiesBuilder(ClassBuilder classBuilder) : BaseBuilder(classBuilder.Wr
             if (item.Type.IsTypeNamedType())
             {
                 Writer.WriteLine("/// <summary>");
-                Writer.WriteLine($"""/// 自动生成。为<see cref="{item.Name}"/>在<see cref="AttributeData"/>中的<see cref="INamedTypeSymbol"/>表现形式""");
+                Writer.WriteLine($"""/// 自动生成。为<see cref="{item.Name}"/>在<see cref="AttributeData"/>中的<see cref="ITypeSymbol"/>表现形式""");
                 Writer.WriteLine("/// </summary>");
 
 
-                Writer.Write("internal global::Microsoft.CodeAnalysis.INamedTypeSymbol");
+                Writer.Write("internal global::Microsoft.CodeAnalysis.ITypeSymbol");
                 if (item.Type is IArrayTypeSymbol)
                 {
                     Writer.Write("[]");

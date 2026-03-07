@@ -6,5 +6,5 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 ZMS005 | Usage | Warning | MethodDiagnostic, [Documentation](https://learn.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/quality-rules/ca1069)
-ZMS006 | Usage | Error | MethodDiagnostic, [Documentation](https://learn.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/quality-rules/ca1069)
+ZMS006 | Usage | Error | ExtensionDiagnostic
 ZMS007 | Usage | Error | ExtensionDiagnostic

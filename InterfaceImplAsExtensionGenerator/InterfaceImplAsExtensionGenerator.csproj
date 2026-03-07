@@ -15,19 +15,24 @@
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>zms9110750</Authors>
 		<PackageProjectUrl>https://github.com/zms9110750/zms9110750Library</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/zms9110750/zms9110750Library</RepositoryUrl>
+		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Version>0.2.0.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
 		<Title>接口成员生成扩展方法</Title>
-		<Description>
-			为接口添加特性，可以为接口生成扩展方法。
-			当接口包含默认实现，或实现类包含显式实现时，而没有对应的类成员时，可以通过自动生成的调用接口方法。
-			扩展的优先级低于正版类成员。
-		</Description>
-		<PackageReleaseNotes>现在可以处理嵌套类里面的接口，但嵌套类不能有和声明类同名的泛型参数</PackageReleaseNotes>
+		<Description>为接口添加特性，可以为接口生成扩展方法。
+当接口包含默认实现，或实现类包含显式实现时，而没有对应的类成员时，可以通过自动生成的调用接口方法。
+扩展的优先级低于正版类成员。		</Description>
+		<PackageReleaseNotes>新的边缘处理
+- 可以处理方法或属性返回`ref`和`ref readonly`类型
+- 可以处理参数或成员名为关键字
+- 可以处理泛型名与声明处有同名泛型（泛型方法和泛型接口，泛型接口和嵌套泛型接口）
+
+破坏性更新，API名字和命名空间迁移。
+- 现在可以基于语法版本自动决定生成扩展块或扩展方法。</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageTags>SourceGenerator,Extension,Default interface members,Composition</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,16 +46,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.*" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.*" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.*" PrivateAssets="all" /> 
+		<ProjectReference Include="..\MetaSourceGenerator.AttributeFactory\MetaSourceGenerator.AttributeFactory.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
 
-		<ProjectReference Include="..\MetaSourceGenerator.AttributeFactory\MetaSourceGenerator.AttributeFactory.csproj" OutputItemType="Analyzer" />
 
-
-		<Using Include="Microsoft.CodeAnalysis " />
-
-		<Using Include="Microsoft.CodeAnalysis.CSharp.SyntaxFactory">
-		  <Static>True</Static>
-		</Using>
+		<Using Include="Microsoft.CodeAnalysis " />  
 		<Using Include="System.Collections.Immutable" />
 		<Using Include="Microsoft.CodeAnalysis.CSharp " />
 		<Using Include="System.Collections.Generic" />

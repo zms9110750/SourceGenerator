@@ -13,12 +13,14 @@
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>zms9110750</Authors>
 		<PackageProjectUrl>https://github.com/zms9110750/zms9110750Library</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/zms9110750/zms9110750Library</RepositoryUrl>
+		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Version>0.1.0.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
-		<Title>源生成的特性元数据生成强类型特性</Title>
+		<Title>为特性生成AttributeData的工厂方法</Title>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+		<PackageTags>SourceGenerator,Attribute,Factory</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>
 		<AdditionalFiles Include="DiagnosticDefine\AnalyzerReleases.Shipped.md" />
@@ -31,9 +33,6 @@
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
 		</None>
-		<Using Include="Microsoft.CodeAnalysis.CSharp.SyntaxFactory">
-			<Static>True</Static>
-		</Using>
 		<Using Include="Microsoft.CodeAnalysis " />
 		<Using Include="System.Collections.Immutable" />
 		<Using Include="Microsoft.CodeAnalysis.CSharp " />

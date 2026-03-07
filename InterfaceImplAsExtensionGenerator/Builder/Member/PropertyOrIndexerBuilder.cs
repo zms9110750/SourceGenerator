@@ -41,11 +41,11 @@ abstract class PropertyOrIndexerBuilder : MemberBuilder
     {
         if (HasGet)
         {
-            new MethodBuilder(Symbol.GetMethod, Config, Writer, ReportDiagnostic).GenerateMemberExtensionMethod();
+            new MethodBuilder(Symbol.GetMethod!, Config, Writer, ReportDiagnostic).GenerateMemberExtensionMethod();
         }
         if (HasSet)
         {
-            new MethodBuilder(Symbol.SetMethod, Config, Writer, ReportDiagnostic).GenerateMemberExtensionMethod();
+            new MethodBuilder(Symbol.SetMethod!, Config, Writer, ReportDiagnostic).GenerateMemberExtensionMethod();
         }
     }
 }
