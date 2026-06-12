@@ -12,6 +12,15 @@
     public partial class ExtensionGlobalConfigAttribute : Attribute
     {
         /// <summary>
+        /// 命名空间前缀
+        /// </summary>
+        /// <remarks>
+        /// 生成的扩展类都会放在此前缀命名空间下。默认为"zms9110750.Extensions.Generator"。
+        /// 设置 null 或空字符串则不使用前缀。
+        /// </remarks>
+        public string? NamespacePrefix { get => string.IsNullOrWhiteSpace(field) ? DefaultNamespacePrefix : field; set; }
+
+        /// <summary>
         /// 生成的扩展类型名称后缀
         /// </summary>
         /// <remarks>
@@ -59,6 +68,7 @@
         /// </summary> 
         public PublicModifier UsePublic { get => field == default ? DefaultUsePublic : field; set; }
 
+        internal const string DefaultNamespacePrefix = "zms9110750.Extensions.Generator";
         internal const string DefaultTypeNameSuffix = "Extension";
         internal const string DefaultInstanceParameterName = "instance";
         internal const GenerateMembers DefaultGenerateMembersValue = GenerateMembers.Property | GenerateMembers.Method;

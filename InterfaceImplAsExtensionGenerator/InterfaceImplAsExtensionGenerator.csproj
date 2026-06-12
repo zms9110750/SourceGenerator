@@ -18,19 +18,16 @@
 		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Version>0.2.0.0</Version>
+		<Version>0.3.0.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
 		<Title>接口成员生成扩展方法</Title>
 		<Description>为接口添加特性，可以为接口生成扩展方法。
 当接口包含默认实现，或实现类包含显式实现时，而没有对应的类成员时，可以通过自动生成的调用接口方法。
 扩展的优先级低于正版类成员。		</Description>
-		<PackageReleaseNotes>新的边缘处理
-- 可以处理方法或属性返回`ref`和`ref readonly`类型
-- 可以处理参数或成员名为关键字
-- 可以处理泛型名与声明处有同名泛型（泛型方法和泛型接口，泛型接口和嵌套泛型接口）
-
-破坏性更新，API名字和命名空间迁移。
-- 现在可以基于语法版本自动决定生成扩展块或扩展方法。</PackageReleaseNotes>
+		<PackageReleaseNotes>破坏性更新，全局配置新增 `NamespacePrefix` 属性。
+- 新增 `ExtensionGlobalConfigAttribute.NamespacePrefix` 属性，默认值为 `"zms9110750.Extensions.Generator"`。
+- 生成的扩展类现在默认放在此前缀命名空间下。
+- `ExtensionClassNamespace` 显式设置时跳过前缀，保持用户完全控制。</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageTags>SourceGenerator,Extension,Default interface members,Composition</PackageTags>
 	</PropertyGroup>

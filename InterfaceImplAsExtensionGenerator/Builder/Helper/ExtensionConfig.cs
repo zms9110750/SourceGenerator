@@ -35,13 +35,13 @@ internal class ExtensionConfig
         TypeSymbol = typeInternal;
         ClassName = attribute.ExtensionClassName ?? typeInternal.Name + ExtensionGlobalConfig.TypeNameSuffix;
         NamespaceName = attribute.ExtensionClassNamespace
-            ?? (typeInternal.ContainingNamespace.IsGlobalNamespace, ExtensionGlobalConfig.NamespaceSuffix) switch
+            ?? ApplyNamespacePrefix((typeInternal.ContainingNamespace.IsGlobalNamespace, ExtensionGlobalConfig.NamespaceSuffix) switch
             {
                 (true, null) => "",
                 (true, not null) => ExtensionGlobalConfig.NamespaceSuffix,
                 (false, null) => typeInternal.ContainingNamespace.ToDisplayString(),
                 (false, not null) => typeInternal.ContainingNamespace.ToDisplayString() + "." + ExtensionGlobalConfig.NamespaceSuffix,
-            };
+            });
 
         InstanceName = attribute.InstanceParameterName ?? ExtensionGlobalConfig.InstanceParameterName;
         GenerateMembers = attribute.DefaultGenerateMembers.IfDefaultThen(ExtensionGlobalConfig.DefaultGenerateMembers);
@@ -63,9 +63,17 @@ internal class ExtensionConfig
         _ = attribute ?? throw new ArgumentNullException(nameof(attribute));
         TypeSymbol = (attribute.AppendTypeSymbol as INamedTypeSymbol)!;
         ClassName = typeClass.Name;
-        NamespaceName = typeClass.ContainingNamespace.IsGlobalNamespace ? "" : typeClass.ContainingNamespace.ToDisplayString();
+        NamespaceName = ApplyNamespacePrefix(typeClass.ContainingNamespace.IsGlobalNamespace ? "" : typeClass.ContainingNamespace.ToDisplayString());
         InstanceName = attribute.InstanceParameterName ?? ExtensionGlobalConfig.InstanceParameterName;
         GenerateMembers = attribute.DefaultGenerateMembers.IfDefaultThen(ExtensionGlobalConfig.DefaultGenerateMembers);
+    }
+
+    private string ApplyNamespacePrefix(string ns)
+    {
+        var prefix = ExtensionGlobalConfig.NamespacePrefix;
+        if (string.IsNullOrEmpty(prefix)) return ns;
+        if (string.IsNullOrEmpty(ns)) return prefix;
+        return prefix + "." + ns;
     }
 
     /// <summary>
