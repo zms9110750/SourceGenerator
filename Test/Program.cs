@@ -1,24 +1,12 @@
 using System;
-using System.Reflection;
+using zms9110750.Extensions.Generator.System;
+using zms9110750.Extensions.Generator.System.IO;
+using zms9110750.StaticMethodAsExtensionGenerator;
 
-Console.WriteLine("=== Enum 静态方法 ===");
-foreach (var m in typeof(Enum).GetMethods(BindingFlags.Public | BindingFlags.Static))
-{
-    var ps = m.GetParameters();
-    if (ps.Length > 0 && ps[0].ParameterType == typeof(Enum))
-        Console.WriteLine($"  {m.Name}({string.Join(", ", ps.Select(p => p.ParameterType.Name))})");
-}
-if (!typeof(Enum).GetMethods(BindingFlags.Public | BindingFlags.Static)
-    .Any(m => m.GetParameters().Length > 0 && m.GetParameters()[0].ParameterType == typeof(Enum)))
-    Console.WriteLine("  (无 —— 第一个参数都不是 Enum 自身)");
+[assembly: StaticMethodExtensions(StaticMethodExtensionScope.SystemAll)]
 
-Console.WriteLine("\n=== ValueType 静态方法 ===");
-foreach (var m in typeof(ValueType).GetMethods(BindingFlags.Public | BindingFlags.Static))
-{
-    var ps = m.GetParameters();
-    if (ps.Length > 0 && ps[0].ParameterType == typeof(ValueType))
-        Console.WriteLine($"  {m.Name}({string.Join(", ", ps.Select(p => p.ParameterType.Name))})");
-}
-if (!typeof(ValueType).GetMethods(BindingFlags.Public | BindingFlags.Static)
-    .Any(m => m.GetParameters().Length > 0 && m.GetParameters()[0].ParameterType == typeof(ValueType)))
-    Console.WriteLine("  (无 —— 第一个参数都不是 ValueType 自身)");
+Console.WriteLine($"string.IsNullOrEmpty: {"hello".IsNullOrEmpty()}");
+Console.WriteLine($"int.Abs: {Int32Extensions.Abs(-5)}");
+Console.WriteLine($"decimal.Add: {DecimalExtensions.Add(1.5m, 2.3m)}");
+Console.WriteLine($"stream.CanRead: {new System.IO.MemoryStream().CanRead}");
+Console.WriteLine("All OK!");

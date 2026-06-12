@@ -9,7 +9,11 @@ namespace zms9110750.StaticMethodAsExtensionGenerator;
 [AttributeUsage(AttributeTargets.Assembly)]
 public sealed class StaticMethodExtensionsAttribute : Attribute
 {
+    /// <summary>扫描范围标志组合</summary>
     public StaticMethodExtensionScope Scope { get; }
+
+    /// <summary>创建配置实例</summary>
+    /// <param name="scope">要扫描的范围，支持位组合</param>
     public StaticMethodExtensionsAttribute(StaticMethodExtensionScope scope) => Scope = scope;
 }
 

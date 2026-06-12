@@ -18,7 +18,7 @@
 		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Version>0.1.0.0</Version>
+		<Version>0.1.1.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
 		<Title>StaticMethodAsExtensionGenerator</Title>
 		<Description>为所有目标框架的 BCL 类型自动生成实例扩展方法。

@@ -15,8 +15,26 @@ internal sealed class StaticMethodExtensionGenerator : IIncrementalGenerator
             {
                 var scope = ReadScope(comp);
                 var types = CollectTargetTypes(comp, scope);
+
+                // 按命名空间分组，每个命名空间生成一个文件
+                var nsGroups = new Dictionary<string, List<(INamedTypeSymbol type, IMethodSymbol[] methods)>>();
                 foreach (var type in types)
-                    GenerateSource(spc, type);
+                {
+                    var methods = type.GetMembers()
+                        .OfType<IMethodSymbol>()
+                        .Where(m => IsWantedMethod(m, type))
+                        .ToArray();
+                    if (methods.Length == 0) continue;
+
+                    var ns = type.ContainingNamespace.ToDisplayString();
+                    var key = ns.Length > 0 ? ns : "Global";
+                    if (!nsGroups.TryGetValue(key, out var list))
+                        nsGroups[key] = list = [];
+                    list.Add((type, methods));
+                }
+
+                foreach (var kv in nsGroups)
+                    spc.AddSource($"{kv.Key}.g.cs", BuildNamespaceSource(kv.Key, kv.Value.ToArray()));
             }
             catch (Exception ex)
             {
@@ -44,105 +62,114 @@ internal sealed class StaticMethodExtensionGenerator : IIncrementalGenerator
         var core = comp.GetTypeByMetadataName("System.Object")?.ContainingAssembly;
         if (core == null) return [];
 
+        var runtimeAsm = core; // System.Runtime 作为 BCL 基准
+
         var results = new List<INamedTypeSymbol>();
+        // 按生成的扩展类全名（命名空间.类名）去重
         var visited = new HashSet<string>();
 
         foreach (var asm in comp.SourceModule.ReferencedAssemblySymbols)
         {
-            if (!ShouldScanAssembly(asm, scope)) continue;
+            if (!ShouldScanAssembly(asm, scope, runtimeAsm)) continue;
             foreach (var root in asm.GlobalNamespace.GetMembers())
             {
-                if (root is INamespaceSymbol ns && NamespaceMatches(ns, asm, scope))
-                    CollectAll(ns, asm, results, visited, scope);
+                if (root is INamespaceSymbol ns && NamespaceMatches(ns, asm, scope, runtimeAsm))
+                    CollectAll(ns, asm, results, visited, scope, runtimeAsm);
             }
         }
 
         return results;
     }
 
-    private static bool ShouldScanAssembly(IAssemblySymbol asm, StaticMethodExtensionScope scope)
+    private static bool ShouldScanAssembly(IAssemblySymbol asm, StaticMethodExtensionScope scope, IAssemblySymbol runtimeAsm)
     {
         var name = asm.Name;
         // 总是跳过工具程序集
         if (name.StartsWith("Microsoft.CodeAnalysis") || name == "Microsoft.CSharp")
             return false;
         // BCL 程序集
-        if (IsBclAssembly(name))
+        if (IsBclAssembly(asm, runtimeAsm))
             return scope.HasFlag(StaticMethodExtensionScope.BCL) || scope.HasFlag(StaticMethodExtensionScope.System) || scope.HasFlag(StaticMethodExtensionScope.SystemAll);
-        // Microsoft NuGet
+        // Microsoft NuGet（名字以 Microsoft 开头但不是 BCL）
         if (name.StartsWith("Microsoft."))
             return scope.HasFlag(StaticMethodExtensionScope.Microsoft);
         // 其他 NuGet
         return scope.HasFlag(StaticMethodExtensionScope.NuGet);
     }
 
-    private static bool IsBclAssembly(string name)
+    private static bool IsBclAssembly(IAssemblySymbol asm, IAssemblySymbol? runtimeAsm)
     {
-        return name.StartsWith("System.")
-            || name is "System" or "mscorlib" or "netstandard"
-            or "System.Private.CoreLib" or "System.Runtime"
-            or "Microsoft.Win32.Primitives" or "Microsoft.Win32.Registry"
-            or "Microsoft.VisualBasic" or "Microsoft.VisualBasic.Core";
+        // 用公钥令牌判断是否 Microsoft 签名的程序集
+        if (runtimeAsm == null) return false;
+        var key = asm.Identity.PublicKeyToken;
+        var runtimeKey = runtimeAsm.Identity.PublicKeyToken;
+        if (key == null || runtimeKey == null) return false;
+        if (!key.SequenceEqual(runtimeKey)) return false;
+
+        // 版本号与 System.Runtime 大致对齐的，是 BCL 程序集
+        // 版本差距大的（如 Microsoft.Extensions.* 版本号不同）是 NuGet
+        var v = asm.Identity.Version;
+        var rv = runtimeAsm.Identity.Version;
+        return v.Major == rv.Major && v.Minor == rv.Minor;
     }
 
-    private static bool NamespaceMatches(INamespaceSymbol ns, IAssemblySymbol asm, StaticMethodExtensionScope scope)
+    private static bool NamespaceMatches(INamespaceSymbol ns, IAssemblySymbol asm, StaticMethodExtensionScope scope, IAssemblySymbol runtimeAsm)
     {
         var n = ns.ToDisplayString();
         if (scope.HasFlag(StaticMethodExtensionScope.System) && n == "System") return true;
         if (scope.HasFlag(StaticMethodExtensionScope.SystemAll) && (n == "System" || n.StartsWith("System."))) return true;
-        if (scope.HasFlag(StaticMethodExtensionScope.BCL) && IsBclAssembly(asm.Name) && n != "System" && !n.StartsWith("System.")) return true;
-        if (scope.HasFlag(StaticMethodExtensionScope.Microsoft) && !IsBclAssembly(asm.Name) && n.StartsWith("Microsoft.")) return true;
-        if (scope.HasFlag(StaticMethodExtensionScope.NuGet) && !IsBclAssembly(asm.Name) && !n.StartsWith("Microsoft.")) return true;
+        if (scope.HasFlag(StaticMethodExtensionScope.BCL) && IsBclAssembly(asm, runtimeAsm) && n != "System" && !n.StartsWith("System.")) return true;
+        if (scope.HasFlag(StaticMethodExtensionScope.Microsoft) && !IsBclAssembly(asm, runtimeAsm) && n.StartsWith("Microsoft.")) return true;
+        if (scope.HasFlag(StaticMethodExtensionScope.NuGet) && !IsBclAssembly(asm, runtimeAsm) && !n.StartsWith("Microsoft.")) return true;
         return false;
     }
 
-    private static void CollectAll(INamespaceSymbol ns, IAssemblySymbol asm, List<INamedTypeSymbol> results, HashSet<string> visited, StaticMethodExtensionScope scope)
+    private static void CollectAll(INamespaceSymbol ns, IAssemblySymbol asm, List<INamedTypeSymbol> results, HashSet<string> visited, StaticMethodExtensionScope scope, IAssemblySymbol runtimeAsm)
     {
         foreach (var m in ns.GetMembers())
         {
-            if (m is INamespaceSymbol child && NamespaceMatches(child, asm, scope))
-                CollectAll(child, asm, results, visited, scope);
+            if (m is INamespaceSymbol child && NamespaceMatches(child, asm, scope, runtimeAsm))
+                CollectAll(child, asm, results, visited, scope, runtimeAsm);
             else if (m is INamedTypeSymbol t && IsWantedType(t))
             {
-                var k = t.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                if (visited.Add(k)) results.Add(t);
+                // 用生成的扩展类全名去重，而不是类型标识符
+                // 同一命名空间下同名类（来自不同程序集）只会生成一份
+                var clsName = $"{t.ContainingNamespace.ToDisplayString()}.Extensions.{t.Name}Extensions";
+                if (visited.Add(clsName)) results.Add(t);
             }
         }
     }
 
-    private static bool IsWantedType(INamedTypeSymbol t)
+    private static bool IsWantedType(INamedTypeSymbol t) => t is
     {
-        if (t.IsGenericType) return false;
-        if (t.TypeKind is not TypeKind.Class and not TypeKind.Struct) return false;
-        if (t.DeclaredAccessibility != Accessibility.Public) return false;
-        if (t.IsStatic) return false;
-        if (t.SpecialType == SpecialType.System_Object) return false;
-        return true;
-    }
+        IsGenericType: false,
+        IsStatic: false,
+        ContainingType: null,                              // 跳过嵌套类
+        DeclaredAccessibility: Accessibility.Public,
+        TypeKind: TypeKind.Class or TypeKind.Struct,
+        SpecialType: not SpecialType.System_Object,
+    };
 
-    private static void GenerateSource(SourceProductionContext spc, INamedTypeSymbol type)
+    private static string BuildNamespaceSource(string nsName, (INamedTypeSymbol type, IMethodSymbol[] methods)[] groups)
     {
-        var methods = type.GetMembers()
-            .OfType<IMethodSymbol>()
-            .Where(m => IsWantedMethod(m, type))
-            .ToArray();
-
-        if (methods.Length == 0) return;
-
         var sb = new StringBuilder();
         sb.AppendLine("// <auto-generated />");
         sb.AppendLine();
 
-        var ns = type.ContainingNamespace.ToDisplayString();
-        sb.AppendLine($"namespace {ns}.Extensions;");
+        var genNs = nsName.Length > 0 ? $"zms9110750.Extensions.Generator.{nsName}" : "zms9110750.Extensions.Generator";
+        sb.AppendLine($"namespace {genNs};");
         sb.AppendLine();
-        sb.AppendLine($"internal static class {type.Name}Extensions");
-        sb.AppendLine("{");
 
-        foreach (var m in methods) WriteMethod(sb, m, type);
+        foreach (var (type, methods) in groups)
+        {
+            sb.AppendLine($"internal static class {type.Name}Extensions");
+            sb.AppendLine("{");
+            foreach (var m in methods) WriteMethod(sb, m, type);
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
 
-        sb.AppendLine("}");
-        spc.AddSource($"_{type.Name}Extensions.g.cs", sb.ToString());
+        return sb.ToString();
     }
 
     private static bool IsWantedMethod(IMethodSymbol m, INamedTypeSymbol owner)
@@ -202,7 +229,7 @@ internal sealed class StaticMethodExtensionGenerator : IIncrementalGenerator
         }
         sb.AppendLine(")");
         sb.AppendLine("    {");
-        sb.Append($"        {(m.ReturnsVoid ? "" : "return ")}{FmtShort(owner)}.{m.Name}(");
+        sb.Append($"        {(m.ReturnsVoid ? "" : "return ")}{Fmt(owner)}.{m.Name}(");
         for (int i = 0; i < ps.Length; i++)
         {
             if (i > 0) sb.Append(", ");
@@ -224,7 +251,7 @@ internal sealed class StaticMethodExtensionGenerator : IIncrementalGenerator
     private static string FmtShort(INamedTypeSymbol t) => t.ToDisplayString();
     private static string Cref(IMethodSymbol m)
     {
-        var t = m.ContainingType.ToDisplayString();
-        return $"{t}.{m.Name}({string.Join(", ", m.Parameters.Select(p => p.Type.ToDisplayString()))})";
+        var t = Fmt(m.ContainingType);
+        return $"{t}.{m.Name}({string.Join(", ", m.Parameters.Select(p => Fmt(p.Type)))})";
     }
 }
