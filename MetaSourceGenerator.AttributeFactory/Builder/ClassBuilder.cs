@@ -60,6 +60,7 @@ class ClassBuilder(INamedTypeSymbol attributeSymbol, IndentedTextWriter writer, 
         }
 
         {{AttributeFullName}} value = null;
+        #pragma warning disable CS0162
         switch (string.Join("|", global::System.Linq.Enumerable.Select(data.AttributeConstructor.Parameters, p => p.Type.ToDisplayString(format))))
         {
         """);
