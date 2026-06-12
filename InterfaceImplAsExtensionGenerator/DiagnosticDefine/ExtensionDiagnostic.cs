@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace zms9110750.InterfaceImplAsExtensionGenerator.DiagnosticDefine;
 
-namespace zms9110750.InterfaceImplAsExtensionGenerator.DiagnosticDefine;
-
-internal class ExtensionDiagnostic
+internal static class ExtensionDiagnostic
 {
+    private const string HelpLink = "https://github.com/zms9110750/SourceGenerator/blob/main/InterfaceImplAsExtensionGenerator/DiagnosticDefine/AnalyzerReleases.Shipped.md";
+
     /// <summary>
     /// 枚举值不唯一
     /// </summary>
@@ -16,30 +14,29 @@ internal class ExtensionDiagnostic
         category: "Usage",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        helpLinkUri: "https://learn.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/quality-rules/ca1069"
-        );
+        helpLinkUri: HelpLink);
 
     /// <summary>
     /// 只能作用于顶级无泛型静态类
     /// </summary>
     public readonly static DiagnosticDescriptor ZMS006 = new DiagnosticDescriptor(
         id: nameof(ZMS006),
-        title: "只能作用于顶级非泛型静态类",
-        messageFormat: "这个特性用于生成扩展方法。作用类必须满足扩展方法容器条件。必须不是嵌套的，非泛型的，静态类",
+        title: "只允许作用于顶级非泛型静态类",
+        messageFormat: "ExtensionForAttribute 仅能作用于顶级非泛型静态类。",
         category: "Usage",
         DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-        );
+        isEnabledByDefault: true,
+        helpLinkUri: HelpLink);
 
     /// <summary>
     /// 只能作用于接口类型
     /// </summary>
     public readonly static DiagnosticDescriptor ZMS007 = new DiagnosticDescriptor(
         id: nameof(ZMS007),
-        title: "只能作用于接口类型",
-        messageFormat: "这个特性仅能为接口生成扩展方法。不能传入其他类型的类型参数。",
+        title: "只允许作用于接口类型",
+        messageFormat: "ExtensionForAttribute 仅能为接口生成扩展，类型参数必须是接口。",
         category: "Usage",
         DiagnosticSeverity.Error,
-        isEnabledByDefault: true
-        );
+        isEnabledByDefault: true,
+        helpLinkUri: HelpLink);
 }

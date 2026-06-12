@@ -18,12 +18,17 @@
 		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Version>0.1.1.0</Version>
+		<Version>0.1.2.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
 		<Title>StaticMethodAsExtensionGenerator</Title>
-		<Description>为所有目标框架的 BCL 类型自动生成实例扩展方法。
-将 String.IsNullOrEmpty(string) 变为 "text".IsNullOrEmpty()，自动适应 .NET 5/6/7/8/9/10 等不同版本的 API 差异。</Description>
-		<PackageReleaseNotes>初始版本
+		<Description>编译时为 BCL 类型自动生成实例扩展方法。将 String.IsNullOrEmpty(str) 变为 str.IsNullOrEmpty()。</Description>
+		<PackageReleaseNotes>补丁更新：重构代码结构，使用 AttributeFactory 接管构造器解析。
+
+- AttributeFactory 接管构造器解析，消除手动解析构造器的代码
+- 分层项目结构，代码生成改由 IndentedTextWriter 管理缩进
+- 无功能变动，消费者无需改动代码
+
+初始版本
 
 - 通过 Roslyn 源生成器在编译时为 BCL 类型生成扩展方法
 - 自动适配目标框架：.NET 7+ 有 int.Abs，.NET 5 没有——生成器自动识别
