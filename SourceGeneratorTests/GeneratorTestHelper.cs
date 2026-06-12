@@ -16,28 +16,30 @@ internal static class GeneratorTestHelper
         var parseOpts = new CSharpParseOptions(languageVersion);
         var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode, parseOpts);
 
-        var references = new List<MetadataReference>
-        {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(Attribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.ComponentModel.EditorBrowsableAttribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Linq.Enumerable).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Collections.Immutable.ImmutableArray).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(TGenerator).Assembly.Location),
-        };
+        var references = new List<MetadataReference>();
 
+        // Use runtime implementation assemblies for core types.
+        references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(Attribute).Assembly.Location));
         var runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
         if (runtimeDir != null)
         {
-            foreach (var asm in new[] { "System.Runtime.dll", "System.Console.dll", "System.Collections.dll" })
+            foreach (var asm in new[] { "System.Runtime.dll", "System.Console.dll",
+                                         "System.Collections.dll" })
             {
                 var path = Path.Combine(runtimeDir, asm);
                 if (File.Exists(path))
                     references.Add(MetadataReference.CreateFromFile(path));
             }
         }
+
+        // These assemblies are from the host runtime (not corefx), keep as-is
+        references.Add(MetadataReference.CreateFromFile(typeof(System.ComponentModel.EditorBrowsableAttribute).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(System.Linq.Enumerable).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(System.Collections.Immutable.ImmutableArray).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(TGenerator).Assembly.Location));
 
         if (extraReferences != null)
             references.AddRange(extraReferences);

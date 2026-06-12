@@ -9,6 +9,23 @@ class ClassBuilder(INamedTypeSymbol attributeSymbol, IndentedTextWriter writer, 
 {
     public INamedTypeSymbol AttributeSymbol { get; } = attributeSymbol ?? throw new ArgumentNullException(nameof(attributeSymbol));
     public string AttributeFullName => AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+    private string GetConfiguredName(string propertyName, string defaultValue)
+    {
+        var attrData = AttributeSymbol.GetAttributes().FirstOrDefault(
+            a => a.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ==
+                 "global::zms9110750.MetaSourceGenerator.AttributeFactory.FromAttributeDataAttribute");
+
+        if (attrData == null) return defaultValue;
+
+        foreach (var kvp in attrData.NamedArguments)
+        {
+            if (kvp.Key == propertyName && kvp.Value.Value is string str)
+                return str;
+        }
+        return defaultValue;
+    }
+
     public void GenerateSource()
     {
         using DeferredActionScope deferredActionScope = new DeferredActionScope();
@@ -20,14 +37,16 @@ class ClassBuilder(INamedTypeSymbol attributeSymbol, IndentedTextWriter writer, 
         Writer.WriteLine($"partial class {AttributeSymbol.Name}");
         Writer.AppendOpenBracket(deferredActionScope);
         PropertiesBuilder propertiesBuilder = new(this);
-        Writer.WriteLine($"internal const string FullName = \"{AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}\";");
+        var fullNameField = GetConfiguredName("FullName", "FullName");
+        var createMethod = GetConfiguredName("Create", "Create");
+        Writer.WriteLine($"internal const string {fullNameField} = \"{AttributeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}\";");
         Writer.WriteLine();
 
         propertiesBuilder.GenerateSourceProperties();
 
 
         ConstructorsBuilder constructorsBuild = new(this);
-        Writer.WriteLine($"public static {AttributeFullName} Create(global::Microsoft.CodeAnalysis.AttributeData data)");
+        Writer.WriteLine($"public static {AttributeFullName} {createMethod}(global::Microsoft.CodeAnalysis.AttributeData data)");
         Writer.AppendOpenBracket(deferredActionScope);
         Writer.WriteSources($$"""
         if (data == null)

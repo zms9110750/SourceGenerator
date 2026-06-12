@@ -55,6 +55,11 @@ internal static class AttributeParameterHelper
         if (symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.Type")
             return true;
 
+        // Fallback: Error types carry MetadataName=="Type" but ContainingNamespace is <global>.
+        if (symbol is { TypeKind: TypeKind.Error, MetadataName: "Type" } &&
+            symbol.ContainingType == null)
+            return true;
+
         return false;
     }
     /// <summary>
@@ -63,12 +68,19 @@ internal static class AttributeParameterHelper
     /// <param name="symbol"></param>
     /// <returns></returns>
     public static bool IsTypeNamedType(this ITypeSymbol symbol)
-    {  
+    {
         if (symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.Type")
         {
             return true;
         }
-        else if ((ITypeSymbol?)symbol is IArrayTypeSymbol { ElementType: not IArrayTypeSymbol and var eleType })
+        // Fallback: Error types (from ref assembly forwarding issues) carry
+        // MetadataName=="Type" but ContainingNamespace is <global> not System.
+        if (symbol is { TypeKind: TypeKind.Error, MetadataName: "Type" } &&
+            symbol.ContainingType == null)
+        {
+            return true;
+        }
+        if (symbol is IArrayTypeSymbol { ElementType: not IArrayTypeSymbol and var eleType })
         {
             return IsTypeNamedType(eleType);
         }

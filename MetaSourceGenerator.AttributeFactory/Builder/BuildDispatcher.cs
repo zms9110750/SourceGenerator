@@ -34,8 +34,10 @@ internal class BuildDispatcher(GeneratorAttributeSyntaxContext ctx)
              currentType != null;
              currentType = currentType.BaseType)
         {
-            if (currentType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ==
-                "global::System.Attribute")
+            if (currentType.MetadataName == "Attribute" &&
+                currentType.ContainingType == null &&
+                (currentType.ContainingNamespace?.ToDisplayString() == "System" ||
+                 currentType.TypeKind == TypeKind.Error))
             {
                 isAttributeDerived = true;
                 break;

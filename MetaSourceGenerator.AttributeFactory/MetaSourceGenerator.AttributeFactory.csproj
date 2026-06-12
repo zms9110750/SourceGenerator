@@ -15,9 +15,16 @@
 		<PackageProjectUrl>https://github.com/zms9110750/zms9110750Library</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Version>0.1.0.0</Version>
+		<Version>0.1.1.0</Version>
 		<PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
-		<Title>为特性生成AttributeData的工厂方法</Title>
+		<Title>MetaSourceGenerator.AttributeFactory</Title>
+		<Description>为特性类自动生成基于 AttributeData 的工厂方法，支持冲突避让（自定义字段名/方法名）。</Description>
+		<PackageReleaseNotes>v0.1.1.0
+
+- 新增：FromAttributeDataAttribute 增加 FullName / Create 属性，支持自定义生成的常量字段名和工厂方法名（冲突避让）
+- 修复：增强了 System.Attribute 基类判定逻辑，兼容 Error type 场景
+- 修复：移除了未使用的 ZMS004/ZMS005 诊断定义，消除 RS2002 构建警告
+- 改进：诊断描述符添加 helpLinkUri 链接到 GitHub 仓库</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageTags>SourceGenerator,Attribute,Factory</PackageTags>

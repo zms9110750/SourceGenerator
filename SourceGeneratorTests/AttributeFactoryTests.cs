@@ -24,7 +24,7 @@ public class AttributeFactoryTests
             }
             """;
 
-        var result = GeneratorTestHelper.RunGeneratorWithNetstandard<AutoFactoryClassGenerator>(source);
+        var result = GeneratorTestHelper.RunGenerator<AutoFactoryClassGenerator>(source);
 
         if (result.IsEmpty)
         {
@@ -45,6 +45,7 @@ public class AttributeFactoryTests
     public void TypeParameter_GeneratesSymbolProperty()
     {
         var source = """
+            using System;
             using zms9110750.MetaSourceGenerator.AttributeFactory;
 
             [FromAttributeData]
@@ -60,7 +61,7 @@ public class AttributeFactoryTests
             }
             """;
 
-        var result = GeneratorTestHelper.RunGeneratorWithNetstandard<AutoFactoryClassGenerator>(source);
+        var result = GeneratorTestHelper.RunGenerator<AutoFactoryClassGenerator>(source);
 
         if (result.IsEmpty)
         {
@@ -89,7 +90,7 @@ public class AttributeFactoryTests
             }
             """;
 
-        var result = GeneratorTestHelper.RunGeneratorWithNetstandard<AutoFactoryClassGenerator>(source);
+        var result = GeneratorTestHelper.RunGenerator<AutoFactoryClassGenerator>(source);
 
         Assert.True(result.IsEmpty, "Abstract attribute should not generate any files");
     }
