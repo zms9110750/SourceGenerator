@@ -1,0 +1,36 @@
+namespace zms9110750.StaticMethodAsExtensionGenerator;
+
+/// <summary>
+/// 配置静态方法扩展生成器的扫描范围。标记在程序集上。
+/// </summary>
+/// <example>
+/// [assembly: StaticMethodExtensions(StaticMethodExtensionScope.SystemAll | StaticMethodExtensionScope.Microsoft)]
+/// </example>
+[AttributeUsage(AttributeTargets.Assembly)]
+public sealed class StaticMethodExtensionsAttribute : Attribute
+{
+    public StaticMethodExtensionScope Scope { get; }
+    public StaticMethodExtensionsAttribute(StaticMethodExtensionScope scope) => Scope = scope;
+}
+
+/// <summary>
+/// 扫描范围标志
+/// </summary>
+[Flags]
+public enum StaticMethodExtensionScope
+{
+    /// <summary>System 命名空间本身（不进入子命名空间）</summary>
+    System = 1,
+
+    /// <summary>System 及其所有子命名空间（System.Collections、System.IO、System.Text 等）</summary>
+    SystemAll = 2,
+
+    /// <summary>整个基类库（包括 System.*、Microsoft.Win32 等内建程序集）</summary>
+    BCL = 4,
+
+    /// <summary>Microsoft 开头的 NuGet 包（Microsoft.Extensions.* 等）</summary>
+    Microsoft = 8,
+
+    /// <summary>所有第三方 NuGet 包</summary>
+    NuGet = 16,
+}

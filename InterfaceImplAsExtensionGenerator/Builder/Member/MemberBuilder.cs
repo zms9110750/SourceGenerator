@@ -77,7 +77,7 @@ abstract class MemberBuilder
             symbol = asymbol;
         }
 
-        Writer.WriteLine($"/// <inheritdoc cref=\"{symbol.ToDisplayString(MemberFormat).Replace("<", "{").Replace(">", "}").Replace("params ", "")}\"");
+        Writer.WriteLine($"/// <inheritdoc cref=\"{symbol.ToDisplayString(MemberFormat).Replace("<", "{").Replace(">", "}").Replace("params ", "")}\" />");
     }
     /// <summary>
     /// 生成扩展块
