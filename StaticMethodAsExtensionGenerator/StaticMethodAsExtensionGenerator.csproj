@@ -44,4 +44,17 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="zms9110750.MetaSourceGenerator.AttributeFactory" Version="0.1.1.*" OutputItemType="Analyzer" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.CodeAnalysis" />
+		<Using Include="Microsoft.CodeAnalysis.CSharp" />
+		<Using Include="Microsoft.CodeAnalysis.CSharp.Syntax" />
+		<Using Include="System.Text" />
+		<Using Include="zms9110750.MetaSourceGenerator.AttributeFactory" />
+		<Using Include="System.CodeDom.Compiler" />
+	</ItemGroup>
+
 </Project>

@@ -46,7 +46,7 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.*" PrivateAssets="all" />
 		<InternalsVisibleTo Include="SourceGeneratorTests" />
 	
-		<ProjectReference Include="..\MetaSourceGenerator.AttributeFactory\MetaSourceGenerator.AttributeFactory.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
+		<PackageReference Include="zms9110750.MetaSourceGenerator.AttributeFactory" Version="0.1.1.*" OutputItemType="Analyzer" PrivateAssets="all" />
 
 
 		<Using Include="Microsoft.CodeAnalysis " />  

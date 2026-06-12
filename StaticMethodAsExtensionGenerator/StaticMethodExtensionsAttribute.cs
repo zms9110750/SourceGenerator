@@ -1,4 +1,6 @@
-﻿namespace zms9110750.StaticMethodAsExtensionGenerator;
+﻿using zms9110750.MetaSourceGenerator.AttributeFactory;
+
+namespace zms9110750.StaticMethodAsExtensionGenerator;
 
 /// <summary>
 /// 配置静态方法扩展生成器的扫描范围。标记在程序集上。
@@ -9,10 +11,14 @@
 /// <remarks>创建配置实例</remarks>
 /// <param name="scope">要扫描的范围，支持位组合</param>
 [AttributeUsage(AttributeTargets.Assembly)]
-public sealed class StaticMethodExtensionsAttribute(StaticMethodExtensionScope scope) : Attribute
+[FromAttributeData]
+public partial class StaticMethodExtensionsAttribute(StaticMethodExtensionScope scope) : Attribute
 {
     /// <summary>扫描范围标志组合</summary>
-    public StaticMethodExtensionScope Scope { get; } = scope;
+    public StaticMethodExtensionScope Scope { get; set; } = scope;
+
+    /// <summary>默认配置实例（扫描 System.* 全部子命名空间）</summary>
+    public static StaticMethodExtensionsAttribute Default { get; } = new(StaticMethodExtensionScope.SystemAll);
 }
 
 /// <summary>
