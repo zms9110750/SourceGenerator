@@ -37,18 +37,26 @@ internal class StaticBuildDispatcher(Compilation compilation)
 
         foreach (var asm in compilation.SourceModule.ReferencedAssemblySymbols)
         {
-            var scanner = new AssemblyScanner(asm, RuntimeAssembly);
-            if (!scanner.ShouldScan(Scope))
+            if (asm == null) continue;
+            try
             {
-                continue;
-            }
-
-            foreach (var root in asm.GlobalNamespace.GetMembers())
-            {
-                if (root is INamespaceSymbol ns && scanner.NamespaceMatches(ns, Scope))
+                var scanner = new AssemblyScanner(asm, RuntimeAssembly);
+                if (!scanner.ShouldScan(Scope))
                 {
-                    scanner.ScanNamespace(ns, Scope, nsMap, visited);
+                    continue;
                 }
+
+                foreach (var root in asm.GlobalNamespace.GetMembers())
+                {
+                    if (root is INamespaceSymbol ns && scanner.NamespaceMatches(ns, Scope))
+                    {
+                        scanner.ScanNamespace(ns, Scope, nsMap, visited);
+                    }
+                }
+            }
+            catch
+            {
+                // Skip assemblies that can't be scanned
             }
         }
 

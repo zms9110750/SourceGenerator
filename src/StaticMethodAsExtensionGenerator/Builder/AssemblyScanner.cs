@@ -13,8 +13,9 @@ class AssemblyScanner(IAssemblySymbol asm, IAssemblySymbol runtimeAsm)
             }
             var key = asm.Identity.PublicKeyToken;
             var runtimeKey = runtimeAsm.Identity.PublicKeyToken;
-            if (key == null || runtimeKey == null)
+            if (key.IsDefault || runtimeKey.IsDefault)
             {
+                _isBcl = false;
                 return false;
             }
             if (!key.SequenceEqual(runtimeKey))

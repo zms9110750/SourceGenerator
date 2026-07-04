@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\MetaSourceGenerator.AttributeFactory\MetaSourceGenerator.AttributeFactory.csproj"
+                          OutputItemType="Analyzer" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.6.0" />
+    </ItemGroup>
+
+</Project>

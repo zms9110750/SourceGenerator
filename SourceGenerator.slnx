@@ -1,6 +1,16 @@
 <Solution>
-  <Project Path="InterfaceImplAsExtensionGenerator/InterfaceImplAsExtensionGenerator.csproj" />
-  <Project Path="MetaSourceGenerator.AttributeFactory/MetaSourceGenerator.AttributeFactory.csproj" />
-  <Project Path="SourceGeneratorTests/SourceGeneratorTests.csproj" />
-  <Project Path="StaticMethodAsExtensionGenerator/StaticMethodAsExtensionGenerator.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/InterfaceImplAsExtensionGenerator/InterfaceImplAsExtensionGenerator.csproj" />
+    <Project Path="src/MetaSourceGenerator.AttributeFactory/MetaSourceGenerator.AttributeFactory.csproj" />
+    <Project Path="src/StaticMethodAsExtensionGenerator/StaticMethodAsExtensionGenerator.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/SourceGeneratorTests/SourceGeneratorTests.csproj" />
+    <Project Path="test/StaticMethodAsExtensionGeneratorTests/StaticMethodAsExtensionGeneratorTests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/StaticMethodExtensionDemo/StaticMethodExtensionDemo.csproj" />
+    <Project Path="samples/InterfaceExtensionsDemo/InterfaceExtensionsDemo.csproj" />
+    <Project Path="samples/AttributeFactoryDemo/AttributeFactoryDemo.csproj" />
+  </Folder>
 </Solution>

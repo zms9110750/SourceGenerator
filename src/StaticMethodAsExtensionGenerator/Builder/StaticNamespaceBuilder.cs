@@ -24,8 +24,9 @@ class StaticNamespaceBuilder(IndentedTextWriter writer)
 
         foreach (var info in types)
         {
+            using DeferredActionScope classScope = new();
             Writer.WriteLine($"internal static class {info.Type.Name}Extensions");
-            Writer.AppendOpenBracket(deferredActionScope);
+            Writer.AppendOpenBracket(classScope);
 
             foreach (var method in info.Methods)
             {
