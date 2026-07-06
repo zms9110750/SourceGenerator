@@ -5,10 +5,15 @@ namespace zms9110750.StaticMethodAsExtensionGenerator.Builder;
 
 internal class StaticBuildDispatcher(Compilation compilation)
 {
-    public StaticMethodExtensionScope Scope { get; } = (compilation.Assembly.GetAttributes()
-        .Select(StaticMethodExtensionsAttribute.Create)
-        .FirstOrDefault(att => att != null)
-        ?? StaticMethodExtensionsAttribute.Default).Scope;
+    private StaticMethodExtensionsAttribute Attribute { get; } = 
+        compilation.Assembly.GetAttributes()
+            .Select(StaticMethodExtensionsAttribute.Create)
+            .FirstOrDefault(att => att != null)
+            ?? StaticMethodExtensionsAttribute.Default;
+
+    public StaticMethodExtensionScope Scope => Attribute.Scope;
+
+    public bool Public => Attribute.Public;
 
     private IAssemblySymbol? RuntimeAssembly { get; } =
         compilation.GetTypeByMetadataName("System.Object")?.ContainingAssembly;
@@ -65,7 +70,7 @@ internal class StaticBuildDispatcher(Compilation compilation)
             using var buffer = new StringWriter(new StringBuilder());
             using var writer = new IndentedTextWriter(buffer);
 
-            var builder = new StaticNamespaceBuilder(writer);
+            var builder = new StaticNamespaceBuilder(writer, Public);
             builder.GenerateAll(group.Key, group.Value);
 
             context.AddSource(group.Key + ".g.cs", buffer.ToString());

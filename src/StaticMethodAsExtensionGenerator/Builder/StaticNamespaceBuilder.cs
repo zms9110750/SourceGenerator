@@ -3,9 +3,11 @@ using zms9110750.StaticMethodAsExtensionGenerator.Builder.Helper;
 
 namespace zms9110750.StaticMethodAsExtensionGenerator.Builder;
 
-class StaticNamespaceBuilder(IndentedTextWriter writer)
+class StaticNamespaceBuilder(IndentedTextWriter writer, bool isPublic)
 {
     public IndentedTextWriter Writer { get; } = writer ?? throw new ArgumentNullException(nameof(writer));
+
+    private string AccessModifier => isPublic ? "public" : "internal";
 
     private static readonly SymbolDisplayFormat QualifiedFormat = SymbolDisplayFormat.FullyQualifiedFormat;
 
@@ -25,7 +27,7 @@ class StaticNamespaceBuilder(IndentedTextWriter writer)
         foreach (var info in types)
         {
             using DeferredActionScope classScope = new();
-            Writer.WriteLine($"internal static class {info.Type.Name}Extensions");
+            Writer.WriteLine($"{AccessModifier} static class {info.Type.Name}Extensions");
             Writer.AppendOpenBracket(classScope);
 
             foreach (var method in info.Methods)
@@ -42,7 +44,7 @@ class StaticNamespaceBuilder(IndentedTextWriter writer)
 
         Writer.WriteLine($"/// <inheritdoc cref=\"{cref}\" />");
 
-        Writer.Write($"internal static {FullyQualifiedName(method.ReturnType)} {method.Name}(this {FullyQualifiedName(parameters[0].Type)} {EscapeKeywordIfNeeded(parameters[0].Name)}");
+        Writer.Write($"{AccessModifier} static {FullyQualifiedName(method.ReturnType)} {method.Name}(this {FullyQualifiedName(parameters[0].Type)} {EscapeKeywordIfNeeded(parameters[0].Name)}");
         for (int i = 1; i < parameters.Length; i++)
         {
             Writer.Write(", ");

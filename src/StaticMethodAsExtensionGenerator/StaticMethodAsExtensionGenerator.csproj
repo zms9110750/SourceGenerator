@@ -17,11 +17,16 @@
     <RepositoryUrl>https://github.com/zms9110750/SourceGenerator</RepositoryUrl>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.1.2.0</Version>
+    <Version>0.1.4.0</Version>
     <PackageOutputPath>C:\Users\16229\source\NugetPack</PackageOutputPath>
     <Title>StaticMethodAsExtensionGenerator</Title>
     <Description>编译时为 BCL 类型自动生成实例扩展方法。将 String.IsNullOrEmpty(str) 变为 str.IsNullOrEmpty()。</Description>
-    <PackageReleaseNotes>补丁更新：重构代码结构，使用 AttributeFactory 接管构造器解析。
+    <PackageReleaseNotes>新增：Public 配置项，允许生成 public 扩展类和方法。
+
+- StaticMethodExtensionsAttribute 新增 Public 属性（默认 false）
+- 设为 true 时，生成的扩展类和方法为 public 而非 internal
+
+补丁更新：重构代码结构，使用 AttributeFactory 接管构造器解析。
 
 - AttributeFactory 接管构造器解析，消除手动解析构造器的代码
 - 分层项目结构，代码生成改由 IndentedTextWriter 管理缩进

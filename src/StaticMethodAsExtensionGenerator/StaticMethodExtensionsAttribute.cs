@@ -17,6 +17,9 @@ public partial class StaticMethodExtensionsAttribute(StaticMethodExtensionScope 
     /// <summary>扫描范围标志组合</summary>
     public StaticMethodExtensionScope Scope { get; set; } = scope;
 
+    /// <summary>生成的扩展类和方法是否公开（public），默认为 false（internal）</summary>
+    public bool Public { get; set; } = false;
+
     /// <summary>默认配置实例（扫描 System.* 全部子命名空间）</summary>
     public static StaticMethodExtensionsAttribute Default { get; } = new(StaticMethodExtensionScope.SystemAll);
 }
